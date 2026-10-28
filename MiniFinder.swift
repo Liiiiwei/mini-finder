@@ -45,6 +45,7 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
     let titleButton = NSButton()
     let statusLabel = NSTextField(labelWithString: "")
     let emptyLabel = NSTextField(wrappingLabelWithString: "")
+    let permissionButton = NSButton()
     var followButton: NSButton!
     var sortButton: NSButton!
     let divider = NSBox()
@@ -182,6 +183,14 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         emptyLabel.textColor = .tertiaryLabelColor
         emptyLabel.translatesAutoresizingMaskIntoConstraints = false
 
+        // 還沒有權限時，直接帶到系統設定的「輔助使用」頁
+        permissionButton.title = "打開輔助使用設定"
+        permissionButton.bezelStyle = .rounded
+        permissionButton.controlSize = .regular
+        permissionButton.target = self
+        permissionButton.action = #selector(openAccessibilitySettings)
+        permissionButton.translatesAutoresizingMaskIntoConstraints = false
+
         header.onDoubleClick = { [weak self] in self?.toggleCollapsed() }
         header.toolTip = "雙擊收合／展開"
         header.translatesAutoresizingMaskIntoConstraints = false
@@ -191,7 +200,7 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
 
         // 狀態列放在標題區裡，雙擊那一行字也能收合
         header.addSubview(statusLabel)
-        [header, titleButton, toolbar, divider, scroll, emptyLabel].forEach(background.addSubview)
+        [header, titleButton, toolbar, divider, scroll, emptyLabel, permissionButton].forEach(background.addSubview)
         NSLayoutConstraint.activate([
             header.topAnchor.constraint(equalTo: background.topAnchor),
             header.leadingAnchor.constraint(equalTo: background.leadingAnchor),
@@ -221,6 +230,9 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
             emptyLabel.centerYAnchor.constraint(equalTo: scroll.centerYAnchor),
             emptyLabel.leadingAnchor.constraint(equalTo: background.leadingAnchor, constant: 20),
             emptyLabel.trailingAnchor.constraint(equalTo: background.trailingAnchor, constant: -20),
+
+            permissionButton.topAnchor.constraint(equalTo: emptyLabel.bottomAnchor, constant: 12),
+            permissionButton.centerXAnchor.constraint(equalTo: background.centerXAnchor),
         ])
         showStatus()
     }
@@ -327,7 +339,7 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
             statusLabel.stringValue = trusted ? "等待中" : "尚未取得權限"
             emptyLabel.stringValue = trusted
                 ? "切到一個開著檔案的視窗，這裡就會顯示它的資料夾"
-                : "到系統設定 → 輔助使用，打開「迷你 Finder」才能自動跟隨"
+                : "打開「輔助使用」權限，才知道你正在編輯哪個檔案"
         } else {
             if let currentFile, currentFile.deletingLastPathComponent() == folder {
                 statusLabel.stringValue = "正在編輯 \(currentFile.lastPathComponent)"
@@ -337,6 +349,11 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
             emptyLabel.stringValue = entries.isEmpty ? "資料夾是空的" : ""
         }
         emptyLabel.isHidden = collapsed || emptyLabel.stringValue.isEmpty
+        permissionButton.isHidden = collapsed || folder != nil || trusted
+    }
+
+    @objc func openAccessibilitySettings() {
+        NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
     }
 
     func updateSortButton() {
@@ -530,7 +547,7 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         collapsed = value
         UserDefaults.standard.set(value, forKey: "collapsed")
         [divider, scroll].forEach { $0.isHidden = value }
-        emptyLabel.isHidden = value || emptyLabel.stringValue.isEmpty
+        showStatus()
         panel.setFrame(frame, display: true, animate: true)
     }
 }
