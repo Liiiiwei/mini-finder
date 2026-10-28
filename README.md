@@ -27,9 +27,35 @@
 ## 系統需求
 
 - macOS 13 以上
-- Xcode 命令列工具（沒裝過的話，在終端機執行 `xcode-select --install`）
+- Apple 晶片和 Intel 的 Mac 都可以
 
-## 安裝
+## 下載安裝
+
+1. 到 [Releases](https://github.com/Liiiiwei/mini-finder/releases/latest) 下載 `MiniFinder-1.0.dmg`
+2. 打開 dmg，把「迷你 Finder」拖進「應用程式」資料夾
+3. 到「應用程式」資料夾打開「迷你 Finder」
+
+### 第一次打開被擋下來
+
+這個程式沒有經過 Apple 公證，第一次打開時 macOS 會跳出「Apple 無法確認『迷你 Finder』不含惡意軟體」之類的訊息。先按「完成」關掉，然後：
+
+1. 打開「系統設定 → 隱私權與安全性」，捲到最下面
+2. 會看到一行說「迷你 Finder」已被阻擋，按旁邊的「仍要打開」
+3. 輸入電腦密碼，再按一次「仍要打開」
+
+只有第一次要這樣做。macOS 13、14 也可以在「迷你 Finder」上按右鍵選「打開」；macOS 15 以後只能用上面的方法。
+
+### 開啟輔助使用權限
+
+迷你 Finder 要有「輔助使用」權限，才讀得到你正在編輯哪個檔案。還沒開權限時，面板中間會有「打開輔助使用設定」按鈕，按下去直接跳到那一頁，在清單裡打開「迷你 Finder」。開好後按鈕自己消失，不用重開程式。
+
+要用選單列的「登入時自動開啟」，系統會再問一次是否允許控制「System Events」，按「允許」即可。
+
+換成新版後，如果面板不會跟著跳了：到「輔助使用」清單點選「迷你 Finder」，按清單下方的減號刪掉，結束再重開迷你 Finder，照上面步驟重新加入一次。
+
+## 從原始碼編譯
+
+需要 Xcode 命令列工具（沒裝過的話，在終端機執行 `xcode-select --install`）。
 
 ```bash
 git clone https://github.com/Liiiiwei/mini-finder.git
@@ -38,9 +64,9 @@ cd mini-finder
 open ~/Applications/迷你\ Finder.app
 ```
 
-`build.sh` 會編譯 `MiniFinder.swift`，把程式裝到 `~/Applications/迷你 Finder.app`。
+`build.sh` 會編譯 `MiniFinder.swift`，把程式裝到 `~/Applications/迷你 Finder.app`。權限設定和上面「開啟輔助使用權限」一樣。
 
-第一次打開會跳出系統詢問，請到「系統設定 → 隱私權與安全性 → 輔助使用」打開「迷你 Finder」。沒有這個權限，面板讀不到你正在編輯哪個檔案。還沒開權限時，面板中間會有「打開輔助使用設定」按鈕，按下去直接跳到那一頁；開好後按鈕自己消失，不用重開程式。要用「登入時自動開啟」，系統會再問一次是否允許控制「System Events」。
+要自己打包 dmg，執行 `./release.sh`，會產生 `dist/MiniFinder-<版本>.dmg`，裡面是 Apple 晶片＋Intel 的通用版。版本號讀 `Info.plist` 的 `CFBundleShortVersionString`。
 
 ### 重新編譯後不想重勾權限
 
@@ -92,6 +118,7 @@ node record.mjs promo-v2.html video 迷你Finder-介紹-9x16-v2.mp4 21
 | 2026-10-28 | 第三版 | 依修改時間排序、雙擊標題區收合、圖示對齊 |
 | 2026-10-28 | 簽名 | 改用固定憑證簽名，重新編譯不必重勾權限 |
 | 2026-10-28 | 權限按鈕 | 還沒開輔助使用權限時，面板顯示按鈕直接打開系統設定 |
+| 2026-10-28 | 1.0 | 第一個可下載版本：Apple 晶片＋Intel 通用版 dmg |
 | 2026-10-28 | 介紹短片 | 21 秒 9:16 動畫，用程式逐格輸出 |
 
 之後的修改紀錄以本儲存庫的 git 提交紀錄為準。
