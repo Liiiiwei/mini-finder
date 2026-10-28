@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <title>迷你 Finder 介紹短片</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #0b0d10;
+      }
+      body {
+        font-family: "PingFang TC", "Inter", sans-serif;
+        color: #f2f3f5;
+        position: relative;
+      }
+      .abs {
+        position: absolute;
+      }
+
+      /* 字幕 */
+      .cap {
+        left: 70px;
+        right: 70px;
+        top: 230px;
+        opacity: 0;
+      }
+      .cap h1 {
+        font-size: 84px;
+        font-weight: 600;
+        line-height: 1.25;
+        letter-spacing: 1px;
+      }
+      .cap p {
+        margin-top: 28px;
+        font-size: 44px;
+        color: #9aa3ad;
+        font-weight: 400;
+        line-height: 1.4;
+      }
+      .cap .hl {
+        color: #4da3ff;
+      }
+
+      /* 桌面 */
+      #desk {
+        left: 60px;
+        top: 680px;
+        width: 960px;
+        height: 1080px;
+        border-radius: 28px;
+        overflow: hidden;
+        background: #1b2230;
+        border: 1px solid #2a3240;
+      }
+      #menubar {
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 40px;
+        background: rgba(20, 24, 32, 0.85);
+        border-bottom: 1px solid #2a3240;
+      }
+      #menuIcon {
+        right: 24px;
+        top: 9px;
+        width: 26px;
+        height: 22px;
+      }
+
+      .win {
+        border-radius: 16px;
+        background: #23262c;
+        border: 1px solid #3a3f48;
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      }
+      .win .bar {
+        height: 44px;
+        background: #2c3037;
+        border-bottom: 1px solid #3a3f48;
+        position: relative;
+      }
+      .win .bar i {
+        position: absolute;
+        top: 15px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+      }
+      .win .bar i:nth-child(1) {
+        left: 16px;
+        background: #ff5f57;
+      }
+      .win .bar i:nth-child(2) {
+        left: 38px;
+        background: #febc2e;
+      }
+      .win .bar i:nth-child(3) {
+        left: 60px;
+        background: #28c840;
+      }
+      .win .bar span {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 10px;
+        text-align: center;
+        font-size: 19px;
+        color: #b8bec7;
+      }
+
+      #editor {
+        left: 36px;
+        top: 110px;
+        width: 600px;
+        height: 560px;
+      }
+      #editor .body {
+        padding: 34px 36px;
+        font-size: 24px;
+        line-height: 1.9;
+        color: #c9ced6;
+      }
+      #editor .body b {
+        color: #f2f3f5;
+        font-size: 30px;
+        font-weight: 600;
+      }
+      #editor .body .dim {
+        color: #7d8590;
+      }
+
+      #preview {
+        left: 56px;
+        top: 170px;
+        width: 600px;
+        height: 600px;
+      }
+      #preview .img {
+        position: absolute;
+        left: 30px;
+        top: 74px;
+        right: 30px;
+        bottom: 30px;
+        border-radius: 10px;
+        background: #e9e3d8;
+        overflow: hidden;
+      }
+      #preview .img .b1 {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 38%;
+        background: #c96f4a;
+      }
+      #preview .img .b2 {
+        position: absolute;
+        left: 50%;
+        top: 20%;
+        width: 150px;
+        height: 230px;
+        margin-left: -75px;
+        border-radius: 18px;
+        background: #2f3a4a;
+      }
+      #preview .img .b3 {
+        position: absolute;
+        left: 50%;
+        top: calc(20% - 34px);
+        width: 60px;
+        height: 40px;
+        margin-left: -30px;
+        border-radius: 8px;
+        background: #2f3a4a;
+      }
+
+      #upload {
+        left: 40px;
+        top: 520px;
+        width: 580px;
+        height: 480px;
+      }
+      #upload .body {
+        padding: 32px;
+      }
+      #upload .body h3 {
+        font-size: 26px;
+        font-weight: 600;
+        color: #e6e9ee;
+      }
+      #drop {
+        margin-top: 24px;
+        height: 300px;
+        border: 3px dashed #4a5260;
+        border-radius: 16px;
+        position: relative;
+      }
+      #drop .hint {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 118px;
+        text-align: center;
+        font-size: 26px;
+        color: #7d8590;
+      }
+      #drop .done {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 104px;
+        text-align: center;
+        font-size: 28px;
+        color: #e6e9ee;
+        opacity: 0;
+      }
+      #drop .done em {
+        display: block;
+        font-style: normal;
+        font-size: 22px;
+        color: #3ecf7a;
+        margin-top: 10px;
+      }
+
+      /* 面板 */
+      #panel {
+        left: 476px;
+        top: 70px;
+        width: 460px;
+        height: 640px;
+        border-radius: 18px;
+        background: rgba(46, 49, 56, 0.96);
+        border: 1px solid #4a505b;
+        overflow: hidden;
+        box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);
+      }
+      #pHead {
+        left: 0;
+        top: 0;
+        right: 0;
+        height: 116px;
+      }
+      #pTitle {
+        left: 18px;
+        top: 22px;
+        font-size: 30px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+      }
+      #pStatus {
+        left: 20px;
+        top: 68px;
+        font-size: 22px;
+        color: #9aa3ad;
+        white-space: nowrap;
+      }
+      #pTools {
+        right: 10px;
+        top: 22px;
+        display: flex;
+      }
+      #pTools svg {
+        width: 48px;
+        height: 42px;
+        padding: 8px 10px;
+      }
+      #pDiv {
+        left: 0;
+        right: 0;
+        top: 116px;
+        height: 1px;
+        background: #4a505b;
+      }
+      #rows {
+        left: 0;
+        right: 0;
+        top: 124px;
+        bottom: 0;
+      }
+      .row svg {
+        width: 34px;
+        height: 34px;
+      }
+      .row {
+        left: 10px;
+        right: 10px;
+        height: 56px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-left: 12px;
+        font-size: 27px;
+        color: #e6e9ee;
+        white-space: nowrap;
+      }
+      .row.sel {
+        background: #2f6fd6;
+      }
+
+      /* 拖曳中的檔案 */
+      #ghost {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        background: rgba(47, 111, 214, 0.92);
+        font-size: 21px;
+        opacity: 0;
+        white-space: nowrap;
+      }
+
+      #cursor {
+        width: 44px;
+        height: 60px;
+        opacity: 0;
+      }
+      #ripple {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 4px solid #4da3ff;
+        opacity: 0;
+      }
+
+      /* 結尾 */
+      #end {
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1920px;
+        background: #0b0d10;
+        opacity: 0;
+      }
+      #end .logo {
+        left: 50%;
+        top: 640px;
+        width: 200px;
+        height: 200px;
+        margin-left: -100px;
+        border-radius: 46px;
+        background: #2e3138;
+        border: 1px solid #4a505b;
+      }
+      #end .logo svg {
+        position: absolute;
+        left: 44px;
+        top: 50px;
+        width: 112px;
+        height: 100px;
+      }
+      #end h1 {
+        left: 0;
+        right: 0;
+        top: 900px;
+        text-align: center;
+        font-size: 96px;
+        font-weight: 600;
+      }
+      #end p {
+        left: 0;
+        right: 0;
+        top: 1040px;
+        text-align: center;
+        font-size: 46px;
+        color: #9aa3ad;
+      }
+      #end small {
+        left: 0;
+        right: 0;
+        top: 1680px;
+        text-align: center;
+        font-size: 30px;
+        color: #5d6570;
+        letter-spacing: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="abs cap" id="c1">
+      <h1>改到一半的檔案<br />到底存在<span class="hl">哪個資料夾</span>？🤔</h1>
+    </div>
+    <div class="abs cap" id="c2">
+      <h1>我做了一個<br /><span class="hl">迷你 Finder</span> 📂</h1>
+      <p>一直浮在螢幕角落，不會被視窗蓋掉</p>
+    </div>
+    <div class="abs cap" id="c3">
+      <h1>切到哪個檔案<br />就<span class="hl">跳到它的資料夾</span> ⚡</h1>
+    </div>
+    <div class="abs cap" id="c4">
+      <h1><span class="hl">拖出去</span>就能上傳 🚀</h1>
+      <p>雙擊直接打開 👆</p>
+    </div>
+    <div class="abs cap" id="c5">
+      <h1>剛改過的檔案<br /><span class="hl">排最上面</span> 🕐</h1>
+    </div>
+    <div class="abs cap" id="c6">
+      <h1>用不到時<br /><span class="hl">雙擊收起來</span> 👌</h1>
+    </div>
+
+    <div class="abs" id="desk">
+      <div class="abs" id="menubar">
+        <svg class="abs" id="menuIcon" viewBox="0 0 26 22">
+          <path
+            d="M2 4a2 2 0 0 1 2-2h6l2 3h10a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"
+            fill="none"
+            stroke="#c9ced6"
+            stroke-width="2"
+          />
+        </svg>
+      </div>
+
+      <div class="abs win" id="editor">
+        <div class="bar"><i></i><i></i><i></i><span>週報.md</span></div>
+        <div class="body">
+          <b>10 月第 4 週週報</b><br />
+          <span class="dim">## 本週重點</span><br />
+          - 廣告花費 vs 上週<br />
+          - 新素材測試結果<br />
+          - 下週要做的事<br />
+          <span class="dim">## 數據</span><br />
+          - 點擊率、轉換、成本…
+        </div>
+      </div>
+
+      <div class="abs win" id="preview">
+        <div class="bar"><i></i><i></i><i></i><span>主視覺-v3.png</span></div>
+        <div class="img">
+          <div class="b1"></div>
+          <div class="b3"></div>
+          <div class="b2"></div>
+        </div>
+      </div>
+
+      <div class="abs win" id="upload">
+        <div class="bar"><i></i><i></i><i></i><span>上傳素材</span></div>
+        <div class="body">
+          <h3>新增廣告素材</h3>
+          <div id="drop">
+            <div class="hint">把檔案拖到這裡</div>
+            <div class="done">主視覺-v3.png<em>✓ 已上傳</em></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="abs" id="panel">
+        <div class="abs" id="pHead">
+          <div class="abs" id="pTitle"></div>
+          <div class="abs" id="pStatus"></div>
+          <div class="abs" id="pTools">
+            <svg id="sortIcon" viewBox="0 0 22 22"></svg>
+            <svg viewBox="0 0 22 22">
+              <path
+                d="M11 18V4M5 10l6-6 6 6"
+                fill="none"
+                stroke="#9aa3ad"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <svg viewBox="0 0 22 22">
+              <path d="M3 11l16-7-7 16-2-7z" fill="#4da3ff" />
+            </svg>
+            <svg viewBox="0 0 22 22">
+              <path
+                d="M6 6l10 10M16 6L6 16"
+                stroke="#9aa3ad"
+                stroke-width="2.2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+        <div class="abs" id="pDiv"></div>
+        <div class="abs" id="rows"></div>
+      </div>
+
+      <div class="abs" id="ghost"></div>
+      <div class="abs" id="ripple"></div>
+      <svg class="abs" id="cursor" viewBox="0 0 22 30">
+        <path
+          d="M2 2v22l6-6 4 9 4-2-4-9h8z"
+          fill="#fff"
+          stroke="#000"
+          stroke-width="1.5"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+
+    <div class="abs" id="end">
+      <div class="abs logo">
+        <svg viewBox="0 0 26 22">
+          <path
+            d="M2 4a2 2 0 0 1 2-2h6l2 3h10a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"
+            fill="#4da3ff"
+          />
+        </svg>
+      </div>
+      <h1 class="abs">迷你 Finder</h1>
+      <p class="abs">找檔案，不用再一層層點 ✨</p>
+      <small class="abs">LIWEI SIA</small>
+    </div>
+
+    <script>
+      // 所有畫面由 render(t) 決定，同一個 t 永遠畫出同一格，方便逐格輸出
+      const ICON = {
+        dir: '<svg width="28" height="24" viewBox="0 0 26 22"><path d="M2 4a2 2 0 0 1 2-2h6l2 3h10a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" fill="#4da3ff"/></svg>',
+        img: '<svg width="28" height="28" viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2" fill="#e9e3d8"/><rect x="3" y="14" width="18" height="8" rx="1" fill="#c96f4a"/></svg>',
+        doc: '<svg width="28" height="28" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#dfe3e8"/><path d="M8 8h8M8 12h8M8 16h5" stroke="#8a929c" stroke-width="1.6"/></svg>',
+        vid: '<svg width="28" height="28" viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2" fill="#2f3a4a"/><path d="M10 8v8l6-4z" fill="#fff"/></svg>',
+      };
+      const FOLDER_A = {
+        name: "週報",
+        file: "週報.md",
+        rows: [
+          ["dir", "截圖"],
+          ["doc", "10月廣告數據.csv"],
+          ["doc", "會議紀錄.md"],
+          ["doc", "週報.md"],
+          ["doc", "提案大綱.md"],
+        ],
+      };
+      // 依名稱排序與依修改時間排序的兩種順序
+      const FOLDER_B = {
+        name: "10月素材",
+        file: "主視覺-v3.png",
+        rows: [
+          ["dir", "舊稿"],
+          ["doc", "文案.docx"],
+          ["img", "主視覺-v1.png"],
+          ["img", "主視覺-v2.png"],
+          ["img", "主視覺-v3.png"],
+          ["vid", "影片-9x16.mp4"],
+        ],
+      };
+      const BY_TIME = [
+        "主視覺-v3.png",
+        "文案.docx",
+        "影片-9x16.mp4",
+        "主視覺-v2.png",
+        "主視覺-v1.png",
+        "舊稿",
+      ];
+
+      const $ = (id) => document.getElementById(id);
+      const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+      const ease = (x) =>
+        x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+      const seg = (t, a, b) => ease(clamp((t - a) / (b - a)));
+      const lerp = (a, b, k) => a + (b - a) * k;
+
+      // 字幕進出：淡入上浮、淡出
+      const back = (x) => 1 + 2.70158 * Math.pow(x - 1, 3) + 1.70158 * Math.pow(x - 1, 2);
+      // 換場時桌面輕微放大再回來，製造節拍
+      const CUTS = [3.8, 7.2, 9.6, 13.0, 19.2, 23.0];
+      function deskPulse(t) {
+        let p = 0;
+        for (const c of CUTS) { const k = clamp((t - c) / 0.5); if (k > 0 && k < 1) p = Math.sin(Math.PI * k); }
+        return p;
+      }
+      function caption(id, t, a, b) {
+        // 從右側甩進、彈一下；離場往左甩出並模糊
+        // 開場字幕第一格就要清楚，不做進場
+        const kin = a === 0 ? 1 : clamp((t - a) / 0.4);
+        const kout = seg(t, b - 0.3, b);
+        const el = $(id);
+        el.style.opacity = ease(kin) * (1 - kout);
+        el.style.transform = `translateX(${(1 - ease(kin)) * 160 - kout * 160}px) scale(${lerp(0.88, 1, back(kin))})`;
+        el.style.filter = `blur(${(1 - ease(kin)) * 10 + kout * 10}px)`;
+      }
+
+      const ROW_H = 62;
+      let builtFor = null;
+      function buildRows(folder) {
+        if (builtFor === folder) return;
+        builtFor = folder;
+        $("rows").innerHTML = folder.rows
+          .map(
+            ([k, n]) =>
+              `<div class="abs row" data-name="${n}">${ICON[k]}<span>${n}</span></div>`,
+          )
+          .join("");
+        $("pTitle").innerHTML = ICON.dir + `<span>${folder.name}</span>`;
+      }
+
+      // 游標關鍵影格（桌面座標）：[時間, x, y]
+      const CUR = [
+        [13.0, 300, 900],
+        [14.0, 656, 471],
+        [14.4, 656, 471],
+        [15.8, 330, 830],
+        [16.4, 330, 830],
+        [19.2, 600, 600],
+        [20.0, 758, 113],
+        [20.6, 758, 113],
+        [23.0, 650, 160],
+        [23.4, 650, 160],
+        [24.6, 650, 160],
+        [25.4, 820, 400],
+      ];
+      function cursorAt(t) {
+        if (t <= CUR[0][0]) return CUR[0].slice(1);
+        for (let i = 0; i < CUR.length - 1; i++) {
+          const [t0, x0, y0] = CUR[i],
+            [t1, x1, y1] = CUR[i + 1];
+          if (t <= t1) {
+            const k = ease((t - t0) / (t1 - t0));
+            return [lerp(x0, x1, k), lerp(y0, y1, k)];
+          }
+        }
+        return CUR[CUR.length - 1].slice(1);
+      }
+      function ripple(t, at, x, y) {
+        const k = clamp((t - at) / 0.45);
+        if (k <= 0 || k >= 1) return false;
+        const r = $("ripple");
+        r.style.left = x - 35 + "px";
+        r.style.top = y - 35 + "px";
+        r.style.opacity = 1 - k;
+        r.style.transform = `scale(${0.4 + k})`;
+        return true;
+      }
+
+      // 整體加速：影片時間乘上 SPEED 換成內部時間
+      const SPEED = 1.4;
+      function render(tv) {
+        const t = tv * SPEED;
+        // 字幕時段
+        caption("c1", t, 0, 3.6);
+        caption("c2", t, 3.8, 7.0);
+        caption("c3", t, 7.2, 12.8);
+        caption("c4", t, 13.0, 19.0);
+        caption("c5", t, 19.2, 22.8);
+        caption("c6", t, 23.0, 26.2);
+        $("c4").querySelector("p").style.opacity = seg(t, 17.2, 17.6);
+
+        // 視窗：編輯器 → 預覽圖 → 上傳視窗
+        const pv = seg(t, 9.4, 9.9);
+        $("preview").style.opacity = pv;
+        $("preview").style.transform = `translateY(${(1 - pv) * 60}px)`;
+        const up = seg(t, 13.0, 13.5);
+        $("upload").style.opacity = up;
+        $("upload").style.transform = `translateY(${(1 - up) * 60}px)`;
+
+        // 面板出場
+        const pin = seg(t, 4.2, 4.9);
+        const panel = $("panel");
+        panel.style.opacity = pin;
+        panel.style.transform = `scale(${0.9 + 0.1 * pin})`;
+        panel.style.transformOrigin = "100% 0";
+
+        // 自動跟隨：9.6 秒切到第二個資料夾
+        const folder = t < 9.6 ? FOLDER_A : FOLDER_B;
+        buildRows(folder);
+        const flash = t >= 9.6 ? 1 - seg(t, 9.6, 10.4) : 0;
+        panel.style.borderColor =
+          flash > 0 ? `rgba(77,163,255,${flash})` : "#4a505b";
+
+        // 排序：20.4 秒點時鐘後改依修改時間
+        const sortK = seg(t, 20.5, 21.3);
+        const byTime = t >= 20.4;
+        $("sortIcon").innerHTML = byTime
+          ? '<circle cx="11" cy="11" r="8" fill="none" stroke="#9aa3ad" stroke-width="2"/><path d="M11 6v5l3 2" fill="none" stroke="#9aa3ad" stroke-width="2" stroke-linecap="round"/>'
+          : '<text x="2" y="17" font-size="15" font-family="Inter" font-weight="600" fill="#9aa3ad">Aa</text>';
+        $("pStatus").textContent = "正在編輯 " + folder.file;
+        document.querySelectorAll(".row").forEach((el, i) => {
+          const name = el.dataset.name;
+          const ti = BY_TIME.indexOf(name);
+          const idx = folder === FOLDER_B ? lerp(i, ti, sortK) : i;
+          el.style.top = idx * ROW_H + "px";
+          el.classList.toggle("sel", name === folder.file);
+        });
+
+        // 收合：24.6 秒雙擊標題
+        const col = seg(t, 24.7, 25.2);
+        panel.style.height = lerp(640, 117, col) + "px";
+
+        // 游標
+        const showCur = t >= 13.0 && t < 26.2;
+        const [cx, cy] = cursorAt(t);
+        const cur = $("cursor");
+        cur.style.opacity = showCur
+          ? seg(t, 13.0, 13.3) * (1 - seg(t, 25.8, 26.2))
+          : 0;
+        cur.style.left = cx + "px";
+        cur.style.top = cy + "px";
+
+        // 拖曳：14.4 秒按住主視覺-v3.png，15.8 秒放到上傳框
+        const g = $("ghost");
+        const dragging = t >= 14.4 && t < 16.0;
+        g.innerHTML = ICON.img + "<span>主視覺-v3.png</span>";
+        g.style.opacity = dragging
+          ? seg(t, 14.4, 14.6) * (1 - seg(t, 15.8, 16.0))
+          : 0;
+        g.style.left = cx + 20 + "px";
+        g.style.top = cy + 26 + "px";
+        const over = t >= 15.2 && t < 16.0;
+        $("drop").style.borderColor = over ? "#4da3ff" : "#4a5260";
+        $("drop").style.background = over
+          ? "rgba(77,163,255,.08)"
+          : "transparent";
+        const done = seg(t, 16.0, 16.4);
+        $("drop").querySelector(".hint").style.opacity = 1 - done;
+        $("drop").querySelector(".done").style.opacity = done;
+
+        // 點擊波紋
+        $("ripple").style.opacity = 0;
+        ripple(t, 14.2, 662, 479) ||
+          ripple(t, 20.4, 764, 121) ||
+          ripple(t, 24.2, 656, 168) ||
+          ripple(t, 24.45, 656, 168);
+
+        // 結尾
+        // 鏡頭：面板出現後慢慢往面板推近，換場時彈一下
+        const push = seg(t, 4.2, 12) * 0.06;
+        const desk = $("desk");
+        desk.style.transformOrigin = "75% 25%";
+        desk.style.transform = `scale(${1 + push + deskPulse(t) * 0.04})`;
+
+        // 結尾：桌面放大淡出，結尾畫面從放大縮回定位
+        const e = seg(t, 26.0, 26.7);
+        $("end").style.opacity = e;
+        $("end").style.transform = `scale(${lerp(1.15, 1, e)})`;
+        $("end").style.filter = `blur(${(1 - e) * 12}px)`;
+        const logoK = clamp((t - 26.3) / 0.5);
+        document.querySelector("#end .logo").style.transform = `scale(${lerp(0.4, 1, back(logoK))})`;
+      }
+      window.render = render;
+      render(0);
+    </script>
+  </body>
+</html>

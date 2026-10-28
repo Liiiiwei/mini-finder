@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <title>迷你 Finder 介紹短片 v2</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #0b0d10;
+      }
+      body {
+        font-family: "PingFang TC", "Inter", sans-serif;
+        color: #f2f3f5;
+        position: relative;
+      }
+      .abs {
+        position: absolute;
+      }
+
+      /* 字幕：一種樣式貫穿全片，上排小字、下排大字，遮罩由下往上揭開 */
+      .cap {
+        left: 70px;
+        right: 70px;
+        top: 230px;
+      }
+      .cap .ln {
+        overflow: hidden;
+      }
+      .cap .ln > span {
+        display: inline-block;
+        white-space: nowrap;
+      }
+      .cap .sm {
+        font-size: 48px;
+        color: #9aa3ad;
+        font-weight: 500;
+        line-height: 1.5;
+      }
+      .cap .bg {
+        font-size: 128px;
+        font-weight: 700;
+        line-height: 1.25;
+        letter-spacing: 2px;
+      }
+      .cap .hl {
+        color: #4da3ff;
+      }
+
+      #desk {
+        left: 60px;
+        top: 600px;
+        width: 960px;
+        height: 940px;
+        border-radius: 28px;
+        overflow: hidden;
+        background: #1b2230;
+        border: 1px solid #2a3240;
+      }
+      #menubar {
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 40px;
+        background: rgba(20, 24, 32, 0.85);
+        border-bottom: 1px solid #2a3240;
+      }
+      #menuIcon {
+        right: 24px;
+        top: 9px;
+        width: 26px;
+        height: 22px;
+      }
+
+      .win {
+        border-radius: 16px;
+        background: #23262c;
+        border: 1px solid #3a3f48;
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      }
+      .win .bar {
+        height: 44px;
+        background: #2c3037;
+        border-bottom: 1px solid #3a3f48;
+        position: relative;
+      }
+      .win .bar i {
+        position: absolute;
+        top: 15px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+      }
+      .win .bar i:nth-child(1) {
+        left: 16px;
+        background: #ff5f57;
+      }
+      .win .bar i:nth-child(2) {
+        left: 38px;
+        background: #febc2e;
+      }
+      .win .bar i:nth-child(3) {
+        left: 60px;
+        background: #28c840;
+      }
+      .win .bar span {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 10px;
+        text-align: center;
+        font-size: 19px;
+        color: #b8bec7;
+      }
+
+      /* 開場：一層層點進去的欄位檢視 */
+      #browser {
+        left: 40px;
+        top: 100px;
+        width: 880px;
+        height: 760px;
+        transform-origin: 0 0;
+      }
+      #strip {
+        left: 0;
+        top: 44px;
+        height: 670px;
+      }
+      .col {
+        top: 0;
+        width: 220px;
+        height: 670px;
+        border-right: 1px solid #3a3f48;
+        padding-top: 14px;
+      }
+      .it {
+        height: 60px;
+        margin: 0 8px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+        font-size: 26px;
+        color: #d5d9df;
+        white-space: nowrap;
+        position: relative;
+      }
+      .it.sel {
+        background: #2f6fd6;
+        color: #fff;
+      }
+      .it .chev {
+        position: absolute;
+        right: 12px;
+        color: #7d8590;
+        font-size: 20px;
+      }
+      .it.sel .chev {
+        color: #fff;
+      }
+      #crumbs {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 46px;
+        border-top: 1px solid #3a3f48;
+        background: #262a31;
+        font-size: 19px;
+        color: #9aa3ad;
+        padding: 11px 18px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      #editor {
+        left: 36px;
+        top: 110px;
+        width: 600px;
+        height: 560px;
+      }
+      #editor .body {
+        padding: 34px 36px;
+        font-size: 24px;
+        line-height: 1.9;
+        color: #c9ced6;
+      }
+      #editor .body b {
+        color: #f2f3f5;
+        font-size: 30px;
+        font-weight: 600;
+      }
+      #editor .body .dim {
+        color: #7d8590;
+      }
+
+      #preview {
+        left: 56px;
+        top: 170px;
+        width: 600px;
+        height: 600px;
+      }
+      .img {
+        position: absolute;
+        left: 30px;
+        top: 74px;
+        right: 30px;
+        bottom: 30px;
+        border-radius: 10px;
+        background: #e9e3d8;
+        overflow: hidden;
+      }
+      .img .b1 {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 38%;
+        background: #c96f4a;
+      }
+      .img .b2 {
+        position: absolute;
+        left: 50%;
+        top: 20%;
+        width: 150px;
+        height: 230px;
+        margin-left: -75px;
+        border-radius: 18px;
+        background: #2f3a4a;
+      }
+      .img .b3 {
+        position: absolute;
+        left: 50%;
+        top: calc(20% - 34px);
+        width: 60px;
+        height: 40px;
+        margin-left: -30px;
+        border-radius: 8px;
+        background: #2f3a4a;
+      }
+
+      #upload {
+        left: 40px;
+        top: 430px;
+        width: 580px;
+        height: 480px;
+      }
+      #upload .body {
+        padding: 32px;
+      }
+      #upload .body h3 {
+        font-size: 26px;
+        font-weight: 600;
+        color: #e6e9ee;
+      }
+      #drop {
+        margin-top: 24px;
+        height: 300px;
+        border: 3px dashed #4a5260;
+        border-radius: 16px;
+        position: relative;
+      }
+      #drop .hint {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 118px;
+        text-align: center;
+        font-size: 26px;
+        color: #7d8590;
+      }
+      #drop .done {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 104px;
+        text-align: center;
+        font-size: 28px;
+        color: #e6e9ee;
+        opacity: 0;
+      }
+      #drop .done em {
+        display: block;
+        font-style: normal;
+        font-size: 22px;
+        color: #3ecf7a;
+        margin-top: 10px;
+      }
+
+      /* 快速切換時輪流出現的視窗 */
+      #quick {
+        left: 70px;
+        top: 230px;
+        width: 600px;
+        height: 560px;
+        opacity: 0;
+      }
+      #quick .page {
+        position: absolute;
+        left: 30px;
+        top: 74px;
+        right: 30px;
+        bottom: 30px;
+        border-radius: 10px;
+      }
+      #quick .page i {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        height: 16px;
+        border-radius: 8px;
+        background: rgba(0, 0, 0, 0.18);
+      }
+
+      #panel {
+        left: 476px;
+        top: 70px;
+        width: 460px;
+        height: 640px;
+        border-radius: 18px;
+        background: rgba(46, 49, 56, 0.96);
+        border: 2px solid #4a505b;
+        overflow: hidden;
+        box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);
+        opacity: 0;
+      }
+      #pTitle {
+        left: 18px;
+        top: 22px;
+        font-size: 30px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+      }
+      #pStatus {
+        left: 20px;
+        top: 68px;
+        font-size: 22px;
+        color: #9aa3ad;
+        white-space: nowrap;
+        padding: 0 6px;
+        margin-left: -6px;
+        border-radius: 6px;
+      }
+      #pTools {
+        right: 10px;
+        top: 22px;
+        display: flex;
+      }
+      #pTools svg {
+        width: 48px;
+        height: 42px;
+        padding: 8px 10px;
+      }
+      #pDiv {
+        left: 0;
+        right: 0;
+        top: 116px;
+        height: 1px;
+        background: #4a505b;
+      }
+      #rows {
+        left: 0;
+        right: 0;
+        top: 124px;
+        bottom: 0;
+      }
+      .row {
+        left: 10px;
+        right: 10px;
+        height: 56px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-left: 12px;
+        font-size: 27px;
+        color: #e6e9ee;
+        white-space: nowrap;
+      }
+      .row svg {
+        width: 34px;
+        height: 34px;
+      }
+      .row.sel {
+        background: #2f6fd6;
+      }
+
+      #ghost {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        background: rgba(47, 111, 214, 0.92);
+        font-size: 23px;
+        opacity: 0;
+        white-space: nowrap;
+      }
+      #cursor {
+        width: 44px;
+        height: 60px;
+        opacity: 0;
+      }
+      #ripple {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 4px solid #4da3ff;
+        opacity: 0;
+      }
+
+      #tag {
+        left: 0;
+        right: 0;
+        top: 1560px;
+        text-align: center;
+        font-size: 30px;
+        color: #6b7480;
+        letter-spacing: 3px;
+        opacity: 0;
+      }
+      #tag b {
+        color: #c9ced6;
+        font-weight: 600;
+        letter-spacing: 1px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="abs cap" id="caps"></div>
+
+    <div class="abs" id="desk">
+      <div class="abs" id="menubar">
+        <svg class="abs" id="menuIcon" viewBox="0 0 26 22">
+          <path
+            d="M2 4a2 2 0 0 1 2-2h6l2 3h10a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"
+            fill="none"
+            stroke="#c9ced6"
+            stroke-width="2"
+          />
+        </svg>
+      </div>
+
+      <div class="abs win" id="editor">
+        <div class="bar"><i></i><i></i><i></i><span>週報.md</span></div>
+        <div class="body">
+          <b>10 月第 4 週週報</b><br />
+          <span class="dim">## 本週重點</span><br />
+          - 廣告花費 vs 上週<br />
+          - 新素材測試結果<br />
+          - 下週要做的事<br />
+          <span class="dim">## 數據</span><br />
+          - 點擊率、轉換、成本…
+        </div>
+      </div>
+
+      <div class="abs win" id="preview">
+        <div class="bar"><i></i><i></i><i></i><span>主視覺-v3.png</span></div>
+        <div class="img">
+          <div class="b1"></div>
+          <div class="b3"></div>
+          <div class="b2"></div>
+        </div>
+      </div>
+
+      <div class="abs win" id="upload">
+        <div class="bar"><i></i><i></i><i></i><span>上傳素材</span></div>
+        <div class="body">
+          <h3>新增廣告素材</h3>
+          <div id="drop">
+            <div class="hint">把檔案拖到這裡</div>
+            <div class="done">主視覺-v3.png<em>✓ 已上傳</em></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="abs win" id="quick">
+        <div class="bar"><i></i><i></i><i></i><span id="qTitle"></span></div>
+        <div class="page" id="qPage">
+          <i style="top: 60px"></i><i style="top: 100px; right: 120px"></i
+          ><i style="top: 140px"></i><i style="top: 180px; right: 200px"></i>
+        </div>
+      </div>
+
+      <div class="abs win" id="browser">
+        <div class="bar"><i></i><i></i><i></i><span>文件</span></div>
+        <div class="abs" id="strip"></div>
+        <div class="abs" id="crumbs"></div>
+      </div>
+
+      <div class="abs" id="panel">
+        <div class="abs" id="pTitle"></div>
+        <div class="abs" id="pStatus"></div>
+        <div class="abs" id="pTools">
+          <svg id="sortIcon" viewBox="0 0 22 22"></svg>
+          <svg viewBox="0 0 22 22">
+            <path
+              d="M11 18V4M5 10l6-6 6 6"
+              fill="none"
+              stroke="#9aa3ad"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <svg viewBox="0 0 22 22">
+            <path d="M3 11l16-7-7 16-2-7z" fill="#4da3ff" />
+          </svg>
+          <svg viewBox="0 0 22 22">
+            <path
+              d="M6 6l10 10M16 6L6 16"
+              stroke="#9aa3ad"
+              stroke-width="2.2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+        <div class="abs" id="pDiv"></div>
+        <div class="abs" id="rows"></div>
+      </div>
+
+      <div class="abs" id="ghost"></div>
+      <div class="abs" id="ripple"></div>
+      <svg class="abs" id="cursor" viewBox="0 0 22 30">
+        <path
+          d="M2 2v22l6-6 4 9 4-2-4-9h8z"
+          fill="#fff"
+          stroke="#000"
+          stroke-width="1.5"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+
+    <div class="abs" id="tag"><b>迷你 Finder</b>　｜　LIWEI SIA</div>
+
+    <script>
+      // 每一格畫面都是時間 t（秒）的函數，同一個 t 永遠畫出同一格
+      const $ = (id) => document.getElementById(id);
+      const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+      const ease = (x) =>
+        x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+      const out = (x) => 1 - Math.pow(1 - x, 3);
+      const back = (x) =>
+        1 + 2.70158 * Math.pow(x - 1, 3) + 1.70158 * Math.pow(x - 1, 2);
+      const seg = (t, a, b) => ease(clamp((t - a) / (b - a)));
+      const lerp = (a, b, k) => a + (b - a) * k;
+
+      const ICON = {
+        dir: '<svg width="28" height="24" viewBox="0 0 26 22"><path d="M2 4a2 2 0 0 1 2-2h6l2 3h10a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" fill="#4da3ff"/></svg>',
+        img: '<svg width="28" height="28" viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2" fill="#e9e3d8"/><rect x="3" y="14" width="18" height="8" rx="1" fill="#c96f4a"/></svg>',
+        doc: '<svg width="28" height="28" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#dfe3e8"/><path d="M8 8h8M8 12h8M8 16h5" stroke="#8a929c" stroke-width="1.6"/></svg>',
+        vid: '<svg width="28" height="28" viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2" fill="#5b6b82"/><path d="M10 8v8l6-4z" fill="#fff"/></svg>',
+        pdf: '<svg width="28" height="28" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#e5534b"/><path d="M8 10h8M8 14h6" stroke="#fff" stroke-width="1.6"/></svg>',
+        ppt: '<svg width="28" height="28" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" fill="#e8a33d"/><rect x="8" y="8" width="8" height="6" fill="#fff"/></svg>',
+      };
+
+      // ---------- 字幕 ----------
+      // [開始, 結束, 小字, 大字, 大字是否用強調色]
+      const CAPS = [
+        [0.0, 2.2, "改到一半的檔案", "存在哪？😩", false],
+        [2.2, 4.8, "所以我做了", "迷你 Finder", true],
+        [4.8, 8.2, "切到哪個檔案", "就跳到哪", false],
+        [8.2, 11.6, "要上傳？", "直接拖 🚀", false],
+        [11.6, 14.0, "剛改過的", "排第一", false],
+        [14.0, 16.4, "切再快", "都跟得上", true],
+        [16.4, 18.4, "用不到時", "雙擊收起", false],
+        [18.4, 99, "存在哪？", "一眼就知道 ✨", true],
+      ];
+      $("caps").innerHTML = CAPS.map(
+        (c, i) =>
+          `<div class="abs" id="cap${i}" style="left:0;right:0;top:0">
+     <div class="ln sm"><span>${c[2]}</span></div>
+     <div class="ln bg"><span class="${c[4] ? "hl" : ""}">${c[3]}</span></div>
+   </div>`,
+      ).join("");
+
+      function renderCaps(t) {
+        CAPS.forEach(([a, b], i) => {
+          const el = $("cap" + i);
+          const [sm, bg] = el.querySelectorAll(".ln > span");
+          // 開場那句第一格就要完整出現
+          const kS = a === 0 ? 1 : out(clamp((t - a + 0.2) / 0.3));
+          const kB = a === 0 ? 1 : out(clamp((t - a + 0.12) / 0.32));
+          const x = seg(t, b - 0.22, b);
+          el.style.visibility = t >= a - 0.2 && t < b ? "visible" : "hidden";
+          sm.style.transform = `translateY(${(1 - kS) * 110 - x * 110}%)`;
+          bg.style.transform = `translateY(${(1 - kB) * 110 - x * 110}%)`;
+        });
+        // 開場的「存在哪」抖一下
+        const shake =
+          t > 0.5 && t < 1.1 ? Math.sin(t * 60) * 6 * (1 - (t - 0.5) / 0.6) : 0;
+        $("cap0").querySelector(".bg > span").style.transform +=
+          ` translateX(${shake}px)`;
+      }
+
+      // ---------- 開場欄位檢視 ----------
+      const COLS = [
+        [
+          ["dir", "下載"],
+          ["dir", "文件"],
+          ["dir", "桌面"],
+          ["dir", "圖片"],
+        ],
+        [
+          ["dir", "個人"],
+          ["dir", "客戶"],
+          ["dir", "課程"],
+        ],
+        [
+          ["dir", "品牌A"],
+          ["dir", "品牌B"],
+          ["dir", "品牌C"],
+        ],
+        [
+          ["dir", "2025"],
+          ["dir", "2026"],
+        ],
+        [
+          ["dir", "9月"],
+          ["dir", "10月"],
+        ],
+        [
+          ["dir", "文案"],
+          ["dir", "素材"],
+          ["dir", "報表"],
+        ],
+        [
+          ["img", "主視覺-v1.png"],
+          ["img", "主視覺-v2.png"],
+          ["img", "主視覺-v3.png"],
+        ],
+      ];
+      const SEL = [1, 1, 0, 1, 1, 1, 2];
+      const OPEN = [0.15, 0.45, 0.75, 1.05, 1.35, 1.65];
+      const COL_W = 220;
+      $("strip").innerHTML = COLS.map(
+        (col, i) =>
+          `<div class="abs col" id="col${i}" style="left:${i * COL_W}px">` +
+          col
+            .map(
+              ([k, n], j) =>
+                `<div class="it" id="it${i}_${j}">${ICON[k]}<span>${n}</span>${k === "dir" ? '<span class="chev">›</span>' : ""}</div>`,
+            )
+            .join("") +
+          "</div>",
+      ).join("");
+      const shiftAt = (t) =>
+        OPEN.reduce(
+          (s, ot, j) =>
+            s + (j + 2 > 4 ? COL_W * seg(t, ot + 0.05, ot + 0.25) : 0),
+          0,
+        );
+
+      function renderBrowser(t) {
+        const opened = OPEN.filter((ot) => t >= ot).length;
+        COLS.forEach((_, i) => {
+          $("col" + i).style.opacity = i <= opened ? 1 : 0;
+          COLS[i].forEach((_, j) =>
+            $(`it${i}_${j}`).classList.toggle(
+              "sel",
+              j === SEL[i] && (i < opened || (i === 6 && t >= 1.95)),
+            ),
+          );
+        });
+        $("strip").style.transform = `translateX(${-shiftAt(t)}px)`;
+        const path = [
+          "文件",
+          "客戶",
+          "品牌A",
+          "2026",
+          "10月",
+          "素材",
+          "主視覺-v3.png",
+        ];
+        $("crumbs").textContent = path
+          .slice(0, Math.max(1, opened + (t >= 1.95 ? 1 : 0)))
+          .join(" › ");
+
+        // 2.2 秒起整個視窗縮成右上角的面板
+        const m = seg(t, 2.2, 2.85);
+        const b = $("browser");
+        b.style.transform = `translate(${(476 - 40) * m}px, ${(70 - 100) * m}px) scale(${lerp(1, 460 / 880, m)}, ${lerp(1, 640 / 760, m)})`;
+        b.style.opacity = 1 - seg(t, 2.6, 2.85);
+        b.style.display = t > 2.9 ? "none" : "";
+      }
+
+      // ---------- 面板 ----------
+      const FOLDERS = {
+        A: {
+          name: "週報",
+          file: "週報.md",
+          rows: [
+            ["dir", "截圖"],
+            ["doc", "10月廣告數據.csv"],
+            ["doc", "會議紀錄.md"],
+            ["doc", "週報.md"],
+            ["doc", "提案大綱.md"],
+          ],
+        },
+        B: {
+          name: "10月素材",
+          file: "主視覺-v3.png",
+          rows: [
+            ["dir", "舊稿"],
+            ["doc", "文案.docx"],
+            ["img", "主視覺-v1.png"],
+            ["img", "主視覺-v2.png"],
+            ["img", "主視覺-v3.png"],
+            ["vid", "影片-9x16.mp4"],
+          ],
+        },
+        C: {
+          name: "合約",
+          file: "合約-品牌A.pdf",
+          rows: [
+            ["pdf", "合約-品牌A.pdf"],
+            ["pdf", "報價單.pdf"],
+            ["pdf", "簽名頁.pdf"],
+          ],
+        },
+        D: {
+          name: "第3堂",
+          file: "講義.pptx",
+          rows: [
+            ["dir", "範例素材"],
+            ["doc", "作業說明.md"],
+            ["ppt", "講義.pptx"],
+          ],
+        },
+      };
+      FOLDERS.E = {
+        name: "報表",
+        file: "10月報表.xlsx",
+        rows: [["doc", "9月報表.xlsx"], ["doc", "10月報表.xlsx"], ["dir", "原始數據"]],
+      };
+      const BY_TIME = [
+        "主視覺-v3.png",
+        "文案.docx",
+        "影片-9x16.mp4",
+        "主視覺-v2.png",
+        "主視覺-v1.png",
+        "舊稿",
+      ];
+      // 面板切換資料夾的時間點
+      const SWITCH = [
+        [0, "A"],
+        [5.45, "B"],
+        [14.4, "C"],
+        [14.9, "D"],
+        [15.4, "E"],
+        [15.9, "B"],
+      ];
+      // 快速切換時前景視窗的內容
+      const QUICK = [
+        [14.3, "合約-品牌A.pdf", "#eef0f3"],
+        [14.8, "講義.pptx", "#f3c77a"],
+        [15.3, "10月報表.xlsx", "#cfe8d6"],
+        [15.8, "主視覺-v3.png", "#e9e3d8"],
+      ];
+
+      const ROW_H = 62;
+      let built = null;
+      function buildRows(key) {
+        if (built === key) return;
+        built = key;
+        const f = FOLDERS[key];
+        $("rows").innerHTML = f.rows
+          .map(
+            ([k, n]) =>
+              `<div class="abs row" data-name="${n}">${ICON[k]}<span>${n}</span></div>`,
+          )
+          .join("");
+        $("pTitle").innerHTML = ICON.dir + `<span>${f.name}</span>`;
+        $("pStatus").textContent = "正在編輯 " + f.file;
+      }
+
+      function renderPanel(t) {
+        const key = SWITCH.filter(([st]) => t >= st).pop()[1];
+        const f = FOLDERS[key];
+        buildRows(key);
+        const p = $("panel");
+        p.style.opacity = seg(t, 2.55, 2.85);
+
+        // 換資料夾時邊框亮一下、標題輕彈
+        let flash = 0,
+          pop = 0;
+        SWITCH.slice(1).forEach(([st]) => {
+          if (t >= st) {
+            flash = Math.max(flash, 1 - seg(t, st, st + 0.5));
+            pop = Math.max(pop, Math.sin(Math.PI * clamp((t - st) / 0.25)));
+          }
+        });
+        p.style.borderColor = `rgba(77,163,255,${flash})`;
+        if (flash === 0) p.style.borderColor = "#4a505b";
+        $("pTitle").style.transform = `scale(${1 + pop * 0.08})`;
+        $("pTitle").style.transformOrigin = "0 50%";
+
+        const byTime = t >= 12.3;
+        const sortK = seg(t, 12.4, 13.0);
+        $("sortIcon").innerHTML = byTime
+          ? '<circle cx="11" cy="11" r="8" fill="none" stroke="#9aa3ad" stroke-width="2"/><path d="M11 6v5l3 2" fill="none" stroke="#9aa3ad" stroke-width="2" stroke-linecap="round"/>'
+          : '<text x="2" y="17" font-size="15" font-family="Inter" font-weight="600" fill="#9aa3ad">Aa</text>';
+        document.querySelectorAll(".row").forEach((el, i) => {
+          const ti = BY_TIME.indexOf(el.dataset.name);
+          const idx =
+            key === "B" && byTime ? lerp(i, ti, t < 14 ? sortK : 1) : i;
+          el.style.top = idx * ROW_H + "px";
+        const moving = key === "B" && Math.abs(idx - Math.round(idx)) > 0.05;
+        el.style.opacity = moving ? 0.25 : 1;
+          el.classList.toggle("sel", el.dataset.name === f.file);
+        });
+
+        // 17.4 秒收合，18.6 秒展開回來
+        const col = seg(t, 17.4, 17.8) * (1 - seg(t, 18.6, 19.0));
+        p.style.height = lerp(640, 118, col) + "px";
+
+        // 結尾：狀態列亮起來，回答開場的問題
+        const ans = seg(t, 19.1, 19.5);
+        const st = $("pStatus");
+        st.style.color = ans > 0 ? "#4da3ff" : "#9aa3ad";
+        st.style.fontWeight = ans > 0 ? "600" : "400";
+        st.style.transform = `scale(${1 + 0.06 * Math.sin(Math.PI * clamp((t - 19.1) / 0.4))})`;
+        st.style.transformOrigin = "0 50%";
+      }
+
+      // ---------- 游標與點擊 ----------
+      // 開場游標：每次點開前先移到那一欄的選取項目
+      const itemPos = (i, at) => [
+        40 + i * COL_W + 90 - shiftAt(at),
+        100 + 44 + 14 + SEL[i] * 60 + 30,
+      ];
+      const CUR = [];
+      OPEN.forEach((ot, i) => {
+        const [x, y] = itemPos(i, ot - 0.15);
+        CUR.push([ot - 0.12, x, y], [ot, x, y]);
+      });
+      {
+        const [x, y] = itemPos(6, 1.8);
+        CUR.push([1.85, x, y], [1.95, x, y]);
+      }
+      CUR.push(
+        [8.3, 300, 830],
+        [9.0, 656, 471],
+        [9.2, 656, 471],
+        [10.4, 330, 720],
+        [10.6, 330, 720],
+        [11.7, 560, 760],
+        [12.2, 758, 113],
+        [12.4, 758, 113],
+        [16.5, 700, 500],
+        [17.0, 650, 160],
+        [18.6, 650, 160],
+        [19.2, 800, 420],
+      );
+      const CLICKS = [...OPEN, 1.95]
+        .map((ot, i) => {
+          const [x, y] = itemPos(Math.min(i, 6), ot - 0.15);
+          return [ot, x, y];
+        })
+        .concat([
+          [9.2, 656, 471],
+          [12.3, 758, 113],
+          [17.15, 650, 160],
+          [17.3, 650, 160],
+          [18.45, 650, 160],
+          [18.58, 650, 160],
+        ]);
+      // 游標出現的時段
+      const CUR_ON = [
+        [0.0, 2.15],
+        [8.3, 13.6],
+        [16.5, 19.3],
+      ];
+
+      function cursorAt(t) {
+        if (t <= CUR[0][0]) return CUR[0].slice(1);
+        for (let i = 0; i < CUR.length - 1; i++) {
+          const [t0, x0, y0] = CUR[i],
+            [t1, x1, y1] = CUR[i + 1];
+          if (t <= t1) {
+            const k = ease((t - t0) / (t1 - t0));
+            return [lerp(x0, x1, k), lerp(y0, y1, k)];
+          }
+        }
+        return CUR[CUR.length - 1].slice(1);
+      }
+
+      function renderCursor(t) {
+        const [cx, cy] = cursorAt(t);
+        const c = $("cursor");
+        const on = CUR_ON.find(([a, b]) => t >= a && t < b);
+        c.style.opacity = on
+          ? (on[0] === 0 ? 1 : seg(t, on[0], on[0] + 0.2)) *
+            (1 - seg(t, on[1] - 0.2, on[1]))
+          : 0;
+        c.style.left = cx + "px";
+        c.style.top = cy + "px";
+
+        const r = $("ripple");
+        r.style.opacity = 0;
+        for (const [at, x, y] of CLICKS) {
+          const k = clamp((t - at) / 0.35);
+          if (k > 0 && k < 1) {
+            r.style.left = x - 35 + "px";
+            r.style.top = y - 35 + "px";
+            r.style.opacity = 1 - k;
+            r.style.transform = `scale(${0.4 + k})`;
+            break;
+          }
+        }
+
+        // 拖曳主視覺-v3.png 到上傳框
+        const g = $("ghost");
+        g.innerHTML = ICON.img + "<span>主視覺-v3.png</span>";
+        g.style.opacity =
+          t >= 9.2 && t < 10.7
+            ? seg(t, 9.2, 9.35) * (1 - seg(t, 10.5, 10.7))
+            : 0;
+        g.style.left = cx + 20 + "px";
+        g.style.top = cy + 26 + "px";
+        const over = t >= 9.9 && t < 10.7;
+        $("drop").style.borderColor = over ? "#4da3ff" : "#4a5260";
+        $("drop").style.background = over
+          ? "rgba(77,163,255,.08)"
+          : "transparent";
+        const done = seg(t, 10.62, 10.9);
+        $("drop").querySelector(".hint").style.opacity = 1 - seg(t, 10.5, 10.6);
+        $("drop").querySelector(".done").style.opacity = done;
+        $("drop").querySelector(".done").style.transform =
+          `scale(${lerp(0.7, 1, back(clamp((t - 10.6) / 0.35)))})`;
+      }
+
+      // ---------- 視窗 ----------
+      function slideIn(id, a, b) {
+        const k = seg(t0, a, a + 0.35);
+        const x = b ? seg(t0, b, b + 0.25) : 0;
+        const el = $(id);
+        el.style.opacity = k * (1 - x);
+        el.style.transform = `translateY(${(1 - k) * 80}px) scale(${lerp(0.96, 1, k)})`;
+      }
+      let t0 = 0;
+      function renderWindows(t) {
+        t0 = t;
+        slideIn("editor", 2.4);
+        slideIn("preview", 5.2);
+        slideIn("upload", 8.3, 14.0);
+        // 快速切換：每次換檔，前景視窗從右側快速滑入
+        const q = QUICK.filter(([qt]) => t >= qt).pop();
+        const qe = $("quick");
+        if (q && t < 16.4) {
+          const k = out(clamp((t - q[0]) / 0.15));
+          qe.style.opacity = 1 - seg(t, 16.1, 16.4);
+          qe.style.transform = `translateX(${(1 - k) * 120}px)`;
+          $("qTitle").textContent = q[1];
+          $("qPage").style.background = q[2];
+        } else qe.style.opacity = 0;
+      }
+
+      // ---------- 鏡頭 ----------
+      const CUTS = CAPS.slice(1).map((c) => c[0]);
+      function renderCamera(t) {
+        let pulse = 0;
+        for (const c of CUTS) {
+          const k = clamp((t - c) / 0.45);
+          if (k > 0 && k < 1) pulse = Math.sin(Math.PI * k);
+        }
+        const push = seg(t, 3.0, 12) * 0.035 * (1 - seg(t, 18.4, 19.4));
+        const d = $("desk");
+        d.style.transformOrigin = "75% 22%";
+        d.style.transform = `scale(${1 + push + pulse * 0.02})`;
+        $("tag").style.opacity = seg(t, 19.4, 19.9);
+      }
+
+      function render(t) {
+        renderCaps(t);
+        renderBrowser(t);
+        renderWindows(t);
+        renderPanel(t);
+        renderCursor(t);
+        renderCamera(t);
+      }
+      window.render = render;
+      render(0);
+    </script>
+  </body>
+</html>
