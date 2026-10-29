@@ -21,7 +21,17 @@ final class HeaderView: NSView {
 }
 
 final class RowView: NSTableRowView {
+    var isCurrent = false
+
+    // 正在編輯的檔案：不管面板有沒有被點到，都用強調色反白
+    override func drawBackground(in dirtyRect: NSRect) {
+        guard isCurrent else { return }
+        NSColor.selectedContentBackgroundColor.setFill()
+        NSBezierPath(roundedRect: bounds.insetBy(dx: 6, dy: 1), xRadius: 5, yRadius: 5).fill()
+    }
+
     override func drawSelection(in dirtyRect: NSRect) {
+        guard !isCurrent else { return }
         let color: NSColor = isEmphasized ? .selectedContentBackgroundColor : .unemphasizedSelectedContentBackgroundColor
         color.setFill()
         NSBezierPath(roundedRect: bounds.insetBy(dx: 6, dy: 1), xRadius: 5, yRadius: 5).fill()
@@ -281,8 +291,9 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         titleButton.image = icon
         titleButton.toolTip = newFolder.path
         entries = listing(of: newFolder)
+        table.deselectAll(nil)
         table.reloadData()
-        selectCurrentFile()
+        table.scrollRowToVisible(0)
         showStatus()
     }
 
@@ -290,11 +301,25 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         let keys: [URLResourceKey] = [.isDirectoryKey, .contentModificationDateKey, .isPackageKey]
         let urls = (try? FileManager.default.contentsOfDirectory(
             at: dir, includingPropertiesForKeys: keys, options: [.skipsHiddenFiles])) ?? []
-        return urls.map { url in
+        let list = urls.map { url in
             let v = try? url.resourceValues(forKeys: Set(keys))
             let isDir = (v?.isDirectory ?? false) && !(v?.isPackage ?? false)
             return Entry(url: url, isDir: isDir, modified: v?.contentModificationDate ?? .distantPast)
-        }.sorted(by: sortOrder)
+        }
+        return ordered(list)
+    }
+
+    // 排序後把正在編輯的檔案移到第一列
+    func ordered(_ list: [Entry]) -> [Entry] {
+        var sorted = list.sorted(by: sortOrder)
+        if let i = sorted.firstIndex(where: isCurrent) {
+            sorted.insert(sorted.remove(at: i), at: 0)
+        }
+        return sorted
+    }
+
+    func isCurrent(_ entry: Entry) -> Bool {
+        entry.url.standardizedFileURL == currentFile
     }
 
     // 依名稱：資料夾在前；依修改時間：不分資料夾，最新的在最上面
@@ -320,15 +345,6 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         let rows = IndexSet(entries.indices.filter { selected.contains(entries[$0].url) })
         table.selectRowIndexes(rows, byExtendingSelection: false)
         showStatus()
-    }
-
-    func selectCurrentFile() {
-        guard let currentFile, let row = entries.firstIndex(where: { $0.url.standardizedFileURL == currentFile }) else {
-            table.deselectAll(nil)
-            return
-        }
-        table.selectRowIndexes([row], byExtendingSelection: false)
-        table.scrollRowToVisible(row)
     }
 
     func showStatus() {
@@ -376,15 +392,20 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
 
     func numberOfRows(in tableView: NSTableView) -> Int { entries.count }
 
-    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? { RowView() }
+    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+        let view = RowView()
+        view.isCurrent = isCurrent(entries[row])
+        return view
+    }
 
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let entry = entries[row]
         let id = NSUserInterfaceItemIdentifier("name")
         let cell = tableView.makeView(withIdentifier: id, owner: self) as? NSTableCellView ?? makeCell(id: id)
-        let isCurrent = entry.url.standardizedFileURL == currentFile
+        let current = isCurrent(entry)
         cell.textField?.stringValue = entry.url.lastPathComponent
-        cell.textField?.font = isCurrent ? .systemFont(ofSize: 12, weight: .semibold) : .systemFont(ofSize: 12)
+        cell.textField?.font = current ? .systemFont(ofSize: 12, weight: .semibold) : .systemFont(ofSize: 12)
+        cell.textField?.textColor = current ? .alternateSelectedControlTextColor : .labelColor
         cell.imageView?.image = NSWorkspace.shared.icon(forFile: entry.url.path)
         cell.toolTip = entry.modified == .distantPast
             ? entry.url.lastPathComponent
@@ -510,7 +531,7 @@ final class PanelController: NSObject, NSTableViewDataSource, NSTableViewDelegat
         UserDefaults.standard.set(sortMode.rawValue, forKey: "sortMode")
         updateSortButton()
         let selected = Set(table.selectedRowIndexes.map { entries[$0].url })
-        entries.sort(by: sortOrder)
+        entries = ordered(entries)
         table.reloadData()
         let rows = IndexSet(entries.indices.filter { selected.contains(entries[$0].url) })
         table.selectRowIndexes(rows, byExtendingSelection: false)
@@ -582,9 +603,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             self?.controller.tick()
         }
         controller.tick()
-        // 測試用：open --args <資料夾> 直接顯示指定資料夾
+        // 測試用：open --args <資料夾或檔案> 直接顯示指定資料夾；給檔案就當成正在編輯的檔案
         if CommandLine.arguments.count > 1 {
-            controller.browse(to: URL(fileURLWithPath: CommandLine.arguments[1]))
+            let url = URL(fileURLWithPath: CommandLine.arguments[1]).standardizedFileURL
+            var isDir: ObjCBool = false
+            FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir)
+            if isDir.boolValue {
+                controller.browse(to: url)
+            } else {
+                controller.currentFile = url
+                controller.browse(to: url.deletingLastPathComponent())
+            }
         }
     }
 
