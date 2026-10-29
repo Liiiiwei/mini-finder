@@ -1,6 +1,6 @@
 #!/bin/zsh
 # 打包發布用的 dmg：Apple 晶片＋Intel 通用版，臨時簽名（沒有經過 Apple 公證）
-# 用法：./release.sh → dist/MiniFinder-<版本>.dmg
+# 用法：./release.sh → dist/MiniFinder-<版本>.dmg ＋ dist/MiniFinder.dmg
 set -e
 cd "$(dirname "$0")"
 VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" Info.plist)
@@ -20,4 +20,6 @@ codesign --force --sign - "$APP"
 # dmg 裡放程式和「應用程式」資料夾的捷徑，打開後拖過去就裝好
 ln -s /Applications "$WORK/stage/Applications"
 hdiutil create -volname "迷你 Finder" -srcfolder "$WORK/stage" -fs HFS+ -format UDZO -ov "$DMG" >/dev/null
-echo "已輸出：$DMG（$(du -h "$DMG" | cut -f1)）"
+# 固定檔名的複本：releases/latest/download/MiniFinder.dmg 永遠指到最新版
+cp "$DMG" dist/MiniFinder.dmg
+echo "已輸出：$DMG 與 dist/MiniFinder.dmg（$(du -h "$DMG" | cut -f1)）"

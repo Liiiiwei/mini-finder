@@ -2,15 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleIdentifier</key><string>com.liweisia.mini-finder</string>
-  <key>CFBundleName</key><string>迷你 Finder</string>
-  <key>CFBundleDisplayName</key><string>迷你 Finder</string>
-  <key>CFBundleExecutable</key><string>MiniFinder</string>
-  <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>1.0</string>
-  <key>CFBundleVersion</key><string>1</string>
-  <key>LSMinimumSystemVersion</key><string>13.0</string>
-  <key>LSUIElement</key><true/>
-  <key>NSAppleEventsUsageDescription</key><string>讀取與設定登入項目，讓「登入時自動開啟」的打勾狀態和系統設定一致。</string>
+	<key>CFBundleDisplayName</key>
+	<string>迷你 Finder</string>
+	<key>CFBundleExecutable</key>
+	<string>MiniFinder</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.liweisia.mini-finder</string>
+	<key>CFBundleName</key>
+	<string>迷你 Finder</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.1</string>
+	<key>CFBundleVersion</key>
+	<string>2</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>讀取與設定登入項目，讓「登入時自動開啟」的打勾狀態和系統設定一致。</string>
 </dict>
 </plist>

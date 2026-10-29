@@ -31,7 +31,7 @@
 
 ## 下載安裝
 
-1. 到 [Releases](https://github.com/Liiiiwei/mini-finder/releases/latest) 下載 `MiniFinder-1.0.dmg`
+1. 下載最新版：[MiniFinder.dmg](https://github.com/Liiiiwei/mini-finder/releases/latest/download/MiniFinder.dmg)（各版本見 [Releases](https://github.com/Liiiiwei/mini-finder/releases)）
 2. 打開 dmg，把「迷你 Finder」拖進「應用程式」資料夾
 3. 到「應用程式」資料夾打開「迷你 Finder」
 
@@ -66,7 +66,7 @@ open ~/Applications/迷你\ Finder.app
 
 `build.sh` 會編譯 `MiniFinder.swift`，把程式裝到 `~/Applications/迷你 Finder.app`。權限設定和上面「開啟輔助使用權限」一樣。
 
-要自己打包 dmg，執行 `./release.sh`，會產生 `dist/MiniFinder-<版本>.dmg`，裡面是 Apple 晶片＋Intel 的通用版。版本號讀 `Info.plist` 的 `CFBundleShortVersionString`。
+要自己打包 dmg，執行 `./release.sh`，會產生 `dist/MiniFinder-<版本>.dmg`，另外複製一份 `dist/MiniFinder.dmg` 給「最新版」下載連結用，裡面是 Apple 晶片＋Intel 的通用版。版本號讀 `Info.plist` 的 `CFBundleShortVersionString`。
 
 ### 重新編譯後不想重勾權限
 
@@ -119,6 +119,7 @@ node record.mjs promo-v2.html video 迷你Finder-介紹-9x16-v2.mp4 21
 | 2026-10-28 | 簽名 | 改用固定憑證簽名，重新編譯不必重勾權限 |
 | 2026-10-28 | 權限按鈕 | 還沒開輔助使用權限時，面板顯示按鈕直接打開系統設定 |
 | 2026-10-28 | 1.0 | 第一個可下載版本：Apple 晶片＋Intel 通用版 dmg |
+| 2026-10-29 | 1.1 | 正在編輯的檔案固定排在第一列並反白 |
 | 2026-10-28 | 介紹短片 | 21 秒 9:16 動畫，用程式逐格輸出 |
 
 之後的修改紀錄以本儲存庫的 git 提交紀錄為準。
